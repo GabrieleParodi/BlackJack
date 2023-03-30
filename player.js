@@ -2,6 +2,7 @@ function Player(deck){
     this.hand = [];
     this.score = 0;
     this.deck = deck;
+    this.money = 1000;
 }
 
 Player.prototype.drawCard = function(){
@@ -28,4 +29,17 @@ Player.prototype.calculateScore = function(){
 
 Player.prototype.getLastCard = function(){
     return this.hand[this.hand.length - 1];
+}
+
+Player.prototype.resetHand = function(){
+    this.hand.length = 0;
+}
+
+Player.prototype.askMoney = function(){
+    let howMuch = prompt("How much for this hand?");
+    this.money -= parseInt(howMuch);
+}
+
+Player.prototype.getMoney = function(){
+    return this.money;
 }

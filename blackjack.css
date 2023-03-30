@@ -25,6 +25,7 @@ button{
     font-weight: 800;
     padding: 0.9375em 2.1875em;
     letter-spacing: 2px;
+    border: 3px solid black;
     border-radius: 15px;
     margin-bottom: 40px;
     transition: 0.4s ease;
@@ -38,6 +39,7 @@ img{
     border-radius: 20px;
     border: 3px black solid;
     transition: 0.4s ease;
+    background-color: white;
 }
 
 img:hover{
@@ -46,9 +48,9 @@ img:hover{
 }
 
 p{
+    font-size: 30px;
     color: black;
     font-weight: 800;
-    
 }
 *{
     font-family: "Rampart One", sans-serif;

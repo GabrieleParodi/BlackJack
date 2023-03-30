@@ -1,14 +1,16 @@
 function Deck(){
     let cards = [];
     let types = ['hearts', 'clubs', 'diamonds', 'spades'];
+    this.cards =  cards;
+    this.types = types;
     for(let i = 1; i < 14; i++){
         for(let t of types){
             let c = new Card(i, t);
             cards.push(c);
         }
     }
-    this.cards =  cards;
 }
+
 
 Deck.prototype.shuffle = function(){
     //creiamo due numeri random e inverto la loro posizione per 1000 volte
@@ -22,7 +24,8 @@ Deck.prototype.shuffle = function(){
 };
 
 Deck.prototype.getCard = function(){
-    let c = this.cards.pop();
-    return c;
-    //return this.cards.pop();
+    if(this.cards.length > 0){
+        let c = this.cards.pop();
+        return c;
+    }
 };
