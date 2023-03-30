@@ -15,7 +15,7 @@ Player.prototype.calculateScore = function(){
     let pos = -1;
     for(let i = 0; i < this.hand.length; i++){
         sum += this.hand[i].value;
-        if(this.hand[i].value == 11){
+        if(this.hand[i].value == 11){ 
             pos = i;
         }
     }

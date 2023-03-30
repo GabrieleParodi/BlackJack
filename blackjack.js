@@ -110,7 +110,7 @@ BlackJack.prototype.stay = function(){
     playAgain.innerText = "Rematch";
     this.buttonTray.appendChild(playAgain);
 
-    let dealerScore = this.dealer.score;
+    let dealerScore = this.dealer.score; 
     let playerScore = this.player.score;
     while(dealerScore < 17 || (dealerScore <= playerScore && playerScore < 22)){
         this.dealer.drawCard();
