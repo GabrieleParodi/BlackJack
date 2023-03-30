@@ -1,9 +1,9 @@
 function BlackJack(containerId){
     this.deck = new Deck();
+    this.player = new Player(this.deck);
+    this.dealer = new Player(this.deck);
     this.container = document.querySelector(`#${containerId}`);
     this.imagePrefix = "img/carte_francesi/";
-    this.playerCards = [];
-    this.dealerCards = [];
 }
 
 BlackJack.prototype.init = function(){
@@ -16,14 +16,11 @@ BlackJack.prototype.init = function(){
 
 BlackJack.prototype.startGame = function(){
     this.deck.shuffle();
-    let c1 = this.deck.getCard();
-    let c2 = this.deck.getCard();
-    this.playerCards.push(c1);
-    this.playerCards.push(c2);
-    let d1 = this.deck.getCard();
-    let d2 = this.deck.getCard();
-    this.dealerCards.push(d1);
-    this.dealerCards.push(d2);
+    
+    this.player.drawCard();
+    this.player.drawCard();
+    this.dealer.drawCard();
+    this.dealer.drawCard();
 
     this.container.classList.add("flex");
     this.container.style.backgroundImage = "url('img/marco1.jpg')";
@@ -46,7 +43,7 @@ BlackJack.prototype.createDealerTable = function(){
     this.container.appendChild(dealerTable);
 
     let dImg1 = document.createElement("img");
-    dImg1.setAttribute('src', `${this.imagePrefix}${this.dealerCards[0].imageName}`);
+    dImg1.setAttribute('src', `${this.imagePrefix}${this.dealer.hand[0].imageName}`);
     dealerTable.appendChild(dImg1);
     let dImg2 = document.createElement("img");
     dImg2.setAttribute('src', `${this.imagePrefix}back.png`);
@@ -79,90 +76,66 @@ BlackJack.prototype.createPlayerTable = function(){
     this.container.appendChild(playerTable);
 
     let img1 = document.createElement("img");
-    img1.setAttribute('src', `${this.imagePrefix}${this.playerCards[0].imageName}`);
+    img1.setAttribute('src', `${this.imagePrefix}${this.player.hand[0].imageName}`);
     playerTable.appendChild(img1);
 
     let img2 = document.createElement("img");
-    img2.setAttribute('src', `${this.imagePrefix}${this.playerCards[1].imageName}`);
+    img2.setAttribute('src', `${this.imagePrefix}${this.player.hand[1].imageName}`);
     playerTable.appendChild(img2);
 }
 
 BlackJack.prototype.visualizeInitialScore = function(){
-    let score = this.playerCards[0].value + this.playerCards[1].value;
-    this.playerScore = score;
     let paragraph = document.createElement("p");
     this.output = paragraph;
     this.container.appendChild(paragraph);
-    paragraph.innerText = `YOUR SCORE IS: ${score}`;
+    paragraph.innerText = `YOUR SCORE IS: ${this.player.score}`;
 }
 
 BlackJack.prototype.visualizeScore = function(){
-    let sum = 0;
-    let pos = -1;
-    for(let i = 0; i < this.playerCards.length; i++){
-        sum += this.playerCards[i].value;
-        if(this.playerCards[i].value == 11){
-            pos = i;
-        }
-    }
-    if(sum > 21 && pos == -1){
-        this.playerScore = sum;
+    let playerScore = this.player.score;
+    if(playerScore > 21){
         this.output.innerText = "You BUSTED :)!"
-    }else if(sum > 21 && pos != -1){
-        this.playerCards[pos].value = 1;
-        this.playerScore = sum - 10;
-        this.output.innerText = `Your score is: ${sum-10}`;
     }else{
-        this.playerScore = sum;
-        this.output.innerText = `Your score is: ${sum}`;
+        this.output.innerText = `Your score is: ${playerScore}`;
     }
 }
 
 BlackJack.prototype.stay = function(){
+    let secondCard = document.querySelector("#dealerTable img:nth-of-type(2)");
+    secondCard.setAttribute('src', `${this.imagePrefix}${this.dealer.hand[1].imageName}`);
+
     this.buttonTray.querySelector("#stay").style.display = "none";
     this.buttonTray.querySelector("#hit").style.display = "none";
     let playAgain = document.createElement("button");
     playAgain.innerText = "Rematch";
     this.buttonTray.appendChild(playAgain);
 
-    let sum = 0;
-    let pos = -1;
-    for(let i = 0; i < this.dealerCards.length; i++){
-        sum += this.dealerCards[i].value;
-        if(this.dealerCards[i].value == 11){
-            pos = i;
-        }
-    }
-    while(sum < 17 || (sum <= this.playerScore && this.playerScore < 22)){
-        let dc = this.deck.getCard();
-        this.dealerCards.push(dc);
+    let dealerScore = this.dealer.score;
+    let playerScore = this.player.score;
+    while(dealerScore < 17 || (dealerScore <= playerScore && playerScore < 22)){
+        this.dealer.drawCard();
+        let lastCard = this.dealer.getLastCard();
         let dImg = document.createElement("img");
-        dImg.setAttribute('src', `${this.imagePrefix}${dc.imageName}`);
+        dImg.setAttribute('src', `${this.imagePrefix}${lastCard.imageName}`);
         this.dealerTable.appendChild(dImg);
-        sum = 0;
-        for(let i = 0; i < this.dealerCards.length; i++){
-            sum += this.dealerCards[i].value;
-            if(this.dealerCards[i].value == 11){
-                pos = i;
-            }
-        }
+        dealerScore = this.dealer.score;
     }
     let finalMessage = ""; 
-    if(sum > 21){
+    if(dealerScore > 21){
         finalMessage += "The dealer BUSTED, how lucky! you WON!";
-    }else if(sum == this.playerScore){
+    }else if(dealerScore == playerScore){
         finalMessage += "You and the dealer made the same score, it's a DRAW...";
-    }else if(sum > this.playerScore){
+    }else if(dealerScore > playerScore){
         finalMessage += "You're a loser! Dealer WON!";
     }
     this.output.innerText = finalMessage;
 }
 
 BlackJack.prototype.hit = function(){
-    let c = this.deck.getCard();
-    this.playerCards.push(c);
+    this.player.drawCard();
+    let lastCard = this.player.getLastCard();
     let pImg = document.createElement("img");
-    pImg.setAttribute('src', `${this.imagePrefix}${c.imageName}`);
+    pImg.setAttribute('src', `${this.imagePrefix}${lastCard.imageName}`);
     this.playerTable.appendChild(pImg);
     this.visualizeScore();
 }
