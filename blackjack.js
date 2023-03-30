@@ -1,7 +1,7 @@
 function BlackJack(containerId){
     this.deck = new Deck();
     this.player = new Player(this.deck);
-    this.dealer = new Player(this.deck);
+    this.dealer = new Player(this.deck),
     this.container = document.querySelector(`#${containerId}`);
     this.imagePrefix = "img/carte_francesi/";
 }
@@ -16,7 +16,7 @@ BlackJack.prototype.init = function(){
 
 BlackJack.prototype.startGame = function(){
     this.deck.shuffle();
-    
+
     this.player.drawCard();
     this.player.drawCard();
     this.dealer.drawCard();
@@ -59,14 +59,22 @@ BlackJack.prototype.createButtonTray = function(){
     hit.setAttribute('id', "hit");
     hit.innerText = "HIT";
 
+    let playAgain = document.createElement("button");
+    playAgain.setAttribute('id', "playAgain");
+    playAgain.style.display = "none";
+    playAgain.innerText = "Rematch";
+
     let buttonTray = document.createElement("div");
+    buttonTray.setAttribute('id', "buttonTray");
     this.buttonTray = buttonTray;
     this.container.appendChild(buttonTray);
     buttonTray.appendChild(stay);
     buttonTray.appendChild(hit);
+    buttonTray.appendChild(playAgain);
 
     stay.addEventListener("click", ()=> this.stay());
     hit.addEventListener("click", ()=> this.hit());
+    playAgain.addEventListener("click", () =>this.resetGame());
 }
 
 BlackJack.prototype.createPlayerTable = function(){
@@ -86,6 +94,7 @@ BlackJack.prototype.createPlayerTable = function(){
 
 BlackJack.prototype.visualizeInitialScore = function(){
     let paragraph = document.createElement("p");
+    paragraph.setAttribute('id', "p");
     this.output = paragraph;
     this.container.appendChild(paragraph);
     paragraph.innerText = `YOUR SCORE IS: ${this.player.score}`;
@@ -101,16 +110,13 @@ BlackJack.prototype.visualizeScore = function(){
 }
 
 BlackJack.prototype.stay = function(){
+    this.buttonTray.querySelector("#playAgain").style.display = "block";
     let secondCard = document.querySelector("#dealerTable img:nth-of-type(2)");
     secondCard.setAttribute('src', `${this.imagePrefix}${this.dealer.hand[1].imageName}`);
-
     this.buttonTray.querySelector("#stay").style.display = "none";
     this.buttonTray.querySelector("#hit").style.display = "none";
-    let playAgain = document.createElement("button");
-    playAgain.innerText = "Rematch";
-    this.buttonTray.appendChild(playAgain);
 
-    let dealerScore = this.dealer.score; 
+    let dealerScore = this.dealer.score;
     let playerScore = this.player.score;
     while(dealerScore < 17 || (dealerScore <= playerScore && playerScore < 22)){
         this.dealer.drawCard();
@@ -133,13 +139,26 @@ BlackJack.prototype.stay = function(){
 
 BlackJack.prototype.hit = function(){
     this.player.drawCard();
-    let lastCard = this.player.getLastCard();
+    let lastCard = this.player.getLastCard();;
     let pImg = document.createElement("img");
     pImg.setAttribute('src', `${this.imagePrefix}${lastCard.imageName}`);
     this.playerTable.appendChild(pImg);
     this.visualizeScore();
 }
 
+BlackJack.prototype.resetGame = function(){
+    this.player.resetHand();
+    this.dealer.resetHand();
+    let remove1 = document.getElementById("dealerTable");
+    remove1.parentNode.removeChild(remove1);
+    let remove2 = document.getElementById("playerTable");
+    remove2.parentNode.removeChild(remove2);
+    let remove3 = document.getElementById("p");
+    remove3.parentNode.removeChild(remove3);
+    let remove4 = document.getElementById("buttonTray");
+    remove4.parentNode.removeChild(remove4);
+    this.startGame();
+}
 
 let game = new BlackJack("container");
 

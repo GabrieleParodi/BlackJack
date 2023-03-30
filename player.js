@@ -29,3 +29,6 @@ Player.prototype.calculateScore = function(){
 Player.prototype.getLastCard = function(){
     return this.hand[this.hand.length-1];
 }
+Player.prototype.resetHand = function(){
+    this.hand.length = 0;
+}
