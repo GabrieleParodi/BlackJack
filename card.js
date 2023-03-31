@@ -14,6 +14,9 @@ function Card(number, type){
 
 Card.prototype.toString = function(){
     let cardName = `${this.number}`;
+    // let string = "ciao" + this.number + "mi chiamo" + this.value;
+    // let string2 =  `ciao ${this.number} mi chiamo ${this.value}`;
+
     if(this.number == 11){
         cardName = 'Jack';
     }
