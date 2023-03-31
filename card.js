@@ -11,7 +11,6 @@ function Card(number, type){
     }
     this.imageName = this.loadImage();
 };
-//haram
 
 Card.prototype.toString = function(){
     let cardName = `${this.number}`;
